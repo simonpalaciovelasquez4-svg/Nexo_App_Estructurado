@@ -1,0 +1,7 @@
+function DeleteModal({type,item,data,onClose,onConfirm}){
+  const links=(relationBlocking[type]||[]).map(([table,field,label])=>({label,count:data[table].filter(r=>r[field]===item.id).length})).filter(row=>row.count>0)
+  const canDelete=links.length===0
+  return <ModalShell onClose={onClose} size="small"><div className="delete-body"><span className={`delete-icon ${canDelete?'':'blocked'}`}>{canDelete?<Trash2 size={27}/>:<LockKeyhole size={27}/>}</span><h2>{canDelete?'¿Eliminar registro?':'Este registro está en uso'}</h2><p>{canDelete?<>Vas a eliminar <strong>{item.nombre || `${getName(data,'usuarios',item.usuarioId)} · ${getName(data,'retos',item.retoId)}`}</strong>. Esta acción no se puede deshacer.</>:<>No puedes eliminar <strong>{item.nombre}</strong> porque tiene información relacionada. Primero elimina o reasigna los registros dependientes.</>}</p>{!canDelete&&<div className="dependency-list">{links.map(row=><span key={row.label}><CircleAlert size={16}/> {row.count} {row.label} relacionado{row.count===1?'':'s'}</span>)}</div>}</div><div className="modal-footer"><button className="btn btn-outline" onClick={onClose}>Cancelar</button>{canDelete&&<button className="btn btn-danger" onClick={()=>onConfirm(type,item.id)}><Trash2 size={17}/> Eliminar</button>}</div></ModalShell>
+}
+
+export default DeleteModal
